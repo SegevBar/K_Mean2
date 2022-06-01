@@ -17,7 +17,7 @@ static PyObject *kmeans(int k, int max_iter, int dim_py, int N_py, PyObject *cen
 void calcCluster(double* vector, Cluster* clusters, int k, int dim);
 double calcDistance(double* vector1, double* vector2, int dim);
 int updateCentroids(Cluster* clusters, int k, int dim);
-PyObject *cToPyObject(Cluster *clusters, int k, int dim, int N)
+PyObject *cToPyObject(Cluster *clusters, int k, int dim, int N);
 static PyObject *fit_capi(PyObject *self, PyObject *args);
 
 
@@ -264,7 +264,8 @@ PyInit_mykmeanssp(void)
 {
     PyObject *m;
     m = PyModule_Create(&moduledef);
-    if (!m){
+    if (!m)
+    {
         return NULL;
     }
     return m;
