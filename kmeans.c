@@ -13,9 +13,12 @@ typedef struct
 } Cluster;
 
 /*Prototypes*/
+static PyObject *kmeans(int k, int max_iter, int dim_py, int N_py, PyObject *centroids_py, PyObject *vectors_py);
 void calcCluster(double* vector, Cluster* clusters, int k, int dim);
 double calcDistance(double* vector1, double* vector2, int dim);
 int updateCentroids(Cluster* clusters, int k, int dim);
+PyObject *cToPy(Cluster *clusters, int k, int dim, double **vectors, int N);
+static PyObject *fit_capi(PyObject *self, PyObject *args);
 
 
 int main(int argc, char *argv[]){
@@ -23,100 +26,41 @@ int main(int argc, char *argv[]){
 }
 
 
-static PyObject *kmeans(int k, int max_iter, int dim, int num_of_points_p, PyObject *centroids_locations, PyObject *data_points_p){
-    int hasMaxIter = 1;
-    int max_iter = 0;
-    int k = 1;
-    FILE *ifp = NULL;
-    FILE *ofp = NULL;
-    int c;
-    char ch;
-    double value;
-    int N = 0;
-    int dim = 1;
+static PyObject *kmeans(int k, int max_iter, int dim_py, int N_py, PyObject *centroids_py, PyObject *vectors_py){
+    int N = N_py;
+    int dim = dim_py;
     Cluster* clusters;
-    double* currVector = NULL;
+    double *curr_vector;
     int has_converged = 0;
     int cnt = 0;
     int i = 0;
     int j = 0;
-    
-    /*check input for enough params*/
-    if ((argc < 4) || (argc > 5)) {
-        printf("Invalid Input!\n");
-        exit(1);
-    } else {
-        if (argc == 4) {
-            hasMaxIter = 0;
-        }
-    }
-    
-    /*find max_iter*/
-    if (hasMaxIter == 0) {  /*check if max_iter is default or param*/
-        max_iter = 200;
-    } else {
-        if ((atoi(argv[2]) <= 0) || (strchr(argv[2], '.') != NULL)) {
-            printf("Invalid Input!\n");
-            exit(1);
-        }
-        max_iter = atoi(argv[2]);
-    }  
-    
-    /*open input file*/
-    ifp = fopen(argv[2 + hasMaxIter], "r");
-    if (ifp == NULL) {
-        printf("Invalid Input!\n");
+
+    /*convert k centroids from python to C*/
+    cnt = 0;
+    clusters = (Cluster *)calloc(k, sizeof(struct Cluster));
+    if (clusters == NULL) {
+        printf("An Error Has Occurred\n");
         exit(1);
     }
-
-    /*find vector dimensions*/
-    while ((c = fgetc(ifp)) != 10) {  /*run until end of line*/
-        if (c == 44) {  /*if c == "," increment dimension*/
-            dim++; 
-        }
-    }
-    rewind(ifp);
-
-    /*find N*/
-    while ((c = fgetc(ifp)) != EOF) {  /*run until end of file*/
-        if(c == 10) { /*if (c == "\n") increment N*/
-            N++;
-        }
-    }
-    rewind(ifp);
-
-    /*find k and check if valid*/ 
-    k = atoi(argv[1]);
-    if ((strchr(argv[1], '.') != NULL) || (N <= k) || (k <= 1)) {
-        printf("Invalid Input!\n");
-        exit(1);
-    }
-   
-    /*Init k clusters*/
-    clusters = (Cluster*)calloc(k,sizeof(Cluster));
     
     for (i = 0; i < k; i++){
-        clusters[i].vector_count = 0; /*init cluster vector counter*/
-
-        /*init sum of vectors in cluster*/ 
-        clusters[i].vectors_sum = (double*)calloc(dim, sizeof(double));
-        if (clusters[i].vectors_sum == NULL) {
-            printf("An Error Has Occurred\n");
-            exit(1);
-        }
-
-        /*init centroid to i'th vectors*/
-        clusters[i].centroid = (double*)calloc(dim, sizeof(double));
+        clusters[i].centroid = (double *)calloc(dim, sizeof(double));
         if (clusters[i].centroid == NULL) {
             printf("An Error Has Occurred\n");
             exit(1);
         }
-        for (j = 0; j < dim; j++){
-           fscanf(ifp, "%lf%c", &value, &ch);
-           clusters[i].centroid[j] = value;
+
+        memcpy(clusters[i].centroid, vectors[PyLong_AsLong(PyList_GetItem(centroids_locations, cnt))], sizeof(double) * dim); 
+        
+        clusters[i].s = 0;
+        clusters[i].vectors_sum = (double *)calloc(dim, sizeof(double));
+        if (clusters[i].vectors_sum == NULL){
+            printf("An Error Has Occurred\n");
+            exit(1);
         }
+        cnt++;
     }
-    rewind(ifp);
 
     /*main loop*/
     cnt = 0;
@@ -124,56 +68,33 @@ static PyObject *kmeans(int k, int max_iter, int dim, int num_of_points_p, PyObj
 
         /*find current vector cluster*/
         for (i = 0; i < N; i++) {
-            currVector = (double*)calloc(dim, sizeof(double));
+            curr_vector = (double*)calloc(dim, sizeof(*curr_vector[i]));
             if (currVector == NULL) {
                 printf("An Error Has Occurred\n");
                 exit(1);
             }
             for (j = 0; j < dim; j++){
-                fscanf(ifp, "%lf%c", &value, &ch);
-                currVector[j] = value;
+                curr_vector[j] = PyFloat_AsDouble(PyList_GetItem(vectors_py, cnt));
+                cnt++;
             }
-            calcCluster(currVector, clusters, k, dim);
-            free(currVector);
+            calcCluster(curr_vector, clusters, k, dim);
+            free(curr_vector);
         }
         
         /*update centroids*/
         has_converged = updateCentroids(clusters, k, dim);
         
-        rewind(ifp);
-        
+        /*reset*/
         for(i = 0; i < k; i++){
-            clusters[i].vector_count = 0;
+            clusters[i].s = 0;
             for(j = 0; j < dim; j++){
                 clusters[i].vectors_sum[j] = 0;
             }
         }
         cnt++;
     }
-    fclose(ifp);
 
-    /*write to output file*/
-    ofp = fopen(argv[3 + hasMaxIter], "w");
-    if (ofp == NULL) {
-        printf("Invalid Input!\n");
-        exit(1);
-    }
-    for (i = 0; i < k; i++) {
-        for (j = 0; j < dim-1; j++){
-            fprintf(ofp, "%.4f%c", clusters[i].centroid[j], ',');
-        }
-        fprintf(ofp, "%.4f%c", clusters[i].centroid[dim-1], '\n');
-    }
-    fclose(ofp);
-    
-    /*free clusters memory*/
-    for(i = 0; i < k; i++){
-        free(clusters[i].centroid);
-        free(clusters[i].vectors_sum);
-    }
-    free(clusters);
-
-    return 0;
+    return cToPy(clusters, k, dim, vectors, N);
 }
 
 void calcCluster(double* vector, Cluster* clusters, int k, int dim) {
@@ -193,7 +114,7 @@ void calcCluster(double* vector, Cluster* clusters, int k, int dim) {
     }
     
     /*update closest cluster*/
-    clusters[closest_cluster].vector_count++; 
+    clusters[closest_cluster].s++; 
     for (j = 0; j < dim; j++) {
         clusters[closest_cluster].vectors_sum[j] += vector[j];
     }
@@ -225,7 +146,7 @@ int updateCentroids(Cluster* clusters, int k, int dim) {
             exit(1);
         }
         for (j = 0; j < dim; j++) {
-            new_centroid[j] = (clusters[i].vectors_sum[j]/clusters[i].vector_count);
+            new_centroid[j] = (clusters[i].vectors_sum[j]/clusters[i].s);
         }
         dist = sqrt(calcDistance(clusters[i].centroid, new_centroid, dim));
 
@@ -242,64 +163,55 @@ int updateCentroids(Cluster* clusters, int k, int dim) {
     return has_converged;
 }
 
-/*
-after finishing running kmeans algorithm we want to return the results to python 
-converting types from C to python
-*/
-PyObject *cToPyObject(Cluster *clusters, int k, int dimension, double **data_points, int num_of_points)
-{
+/*convert centroids from C to python*/
+PyObject *cToPy(Cluster *clusters, int k, int dim, double **vectors, int N){
     PyObject *clusters_py;
     int i = 0;
     int j = 0;
     PyObject *value;
 
     clusters_py = PyList_New(k);
-    for (i = 0; i < k; i++)
-    {
+    for (i = 0; i < k; i++){
         PyObject *curr_vector;
-        curr_vector = PyList_New(dimension);
-        for (j = 0; j < dimension; j++)
-        {
+        curr_vector = PyList_New(dim);
+        for (j = 0; j < dim; j++){
             value = Py_BuildValue("d", clusters[i].centroid[j]);
             PyList_SetItem(curr_vector, j, value);
         }
-        /*
-        adding the PyObject centroid to the PyList clusters
-        */
+        /*add PyObject centroid to PyList clusters*/
         PyList_SetItem(clusters_py, i, curr_vector);
     }
-    free_memory(clusters, data_points, k, num_of_points);
+    /*free clusters memory*/
+    for (i = 0; i < k; i++){
+        free(clusters[i].centroid);
+        free(clusters[i].vectors_sum);
+    }
+    free(clusters);
+    
     return clusters_py;
 }
 
 
-/*
-when calling fit() from python, this function is called. getting arguments from python and pass it to kmeans function
-*/
-static PyObject *fit_capi(PyObject *self, PyObject *args)
-{
+/*fit() function. gets arguments from python to kmeans function*/
+static PyObject *fit_capi(PyObject *self, PyObject *args){
     int k;
     int max_iter;
-    int dimension_p;
-    int num_of_points_p;
+    int dim_py;
+    int N_py;
     PyObject *centroids_locations;
-    PyObject *data_points_p;
+    PyObject *vectors_py;
 
-    if (!(PyArg_ParseTuple(args, "iiiiOO", &k, &max_iter, &dimension_p, &num_of_points_p, &centroids_locations, &data_points_p)))
-    {
+    if (!(PyArg_ParseTuple(args, "iiiiOO", &k, &max_iter, &dim_py, &N_py, &centroids_locations, &vectors_py))){
         return NULL;
     }
-    if (!PyList_Check(centroids_locations) || !PyList_Check(data_points_p))
-    {
+    if (!PyList_Check(centroids_locations) || !PyList_Check(vectors_py)){
         return NULL;
     }
 
-    return Py_BuildValue("O", kmeans(k, max_iter, dimension_p, num_of_points_p, centroids_locations, data_points_p));
+    return Py_BuildValue("O", kmeans(k, max_iter, dim_py, N_py, centroids_locations, vectors_py));
 }
 
-/*
-building mykmeanssp module...
-*/
+/*building mykmeanssp module*/
 static PyMethodDef kmeansMethods[] = {
     {"fit",
      (PyCFunction)fit_capi,
@@ -320,8 +232,7 @@ PyInit_mykmeanssp(void)
 {
     PyObject *m;
     m = PyModule_Create(&moduledef);
-    if (!m)
-    {
+    if (!m){
         return NULL;
     }
     return m;
