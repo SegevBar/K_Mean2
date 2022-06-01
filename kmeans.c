@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#define PY_SSIZE_T_CLEAN
+#include <Python.h>
 
 typedef struct 
 {
@@ -17,6 +19,11 @@ int updateCentroids(Cluster* clusters, int k, int dim);
 
 
 int main(int argc, char *argv[]){
+    return 0;
+}
+
+
+static PyObject *kmeans(int k, int max_iter, int dim, int num_of_points_p, PyObject *centroids_locations, PyObject *data_points_p){
     int hasMaxIter = 1;
     int max_iter = 0;
     int k = 1;
@@ -233,4 +240,89 @@ int updateCentroids(Cluster* clusters, int k, int dim) {
         free(new_centroid);
     }
     return has_converged;
+}
+
+/*
+after finishing running kmeans algorithm we want to return the results to python 
+converting types from C to python
+*/
+PyObject *cToPyObject(Cluster *clusters, int k, int dimension, double **data_points, int num_of_points)
+{
+    PyObject *clusters_py;
+    int i = 0;
+    int j = 0;
+    PyObject *value;
+
+    clusters_py = PyList_New(k);
+    for (i = 0; i < k; i++)
+    {
+        PyObject *curr_vector;
+        curr_vector = PyList_New(dimension);
+        for (j = 0; j < dimension; j++)
+        {
+            value = Py_BuildValue("d", clusters[i].centroid[j]);
+            PyList_SetItem(curr_vector, j, value);
+        }
+        /*
+        adding the PyObject centroid to the PyList clusters
+        */
+        PyList_SetItem(clusters_py, i, curr_vector);
+    }
+    free_memory(clusters, data_points, k, num_of_points);
+    return clusters_py;
+}
+
+
+/*
+when calling fit() from python, this function is called. getting arguments from python and pass it to kmeans function
+*/
+static PyObject *fit_capi(PyObject *self, PyObject *args)
+{
+    int k;
+    int max_iter;
+    int dimension_p;
+    int num_of_points_p;
+    PyObject *centroids_locations;
+    PyObject *data_points_p;
+
+    if (!(PyArg_ParseTuple(args, "iiiiOO", &k, &max_iter, &dimension_p, &num_of_points_p, &centroids_locations, &data_points_p)))
+    {
+        return NULL;
+    }
+    if (!PyList_Check(centroids_locations) || !PyList_Check(data_points_p))
+    {
+        return NULL;
+    }
+
+    return Py_BuildValue("O", kmeans(k, max_iter, dimension_p, num_of_points_p, centroids_locations, data_points_p));
+}
+
+/*
+building mykmeanssp module...
+*/
+static PyMethodDef kmeansMethods[] = {
+    {"fit",
+     (PyCFunction)fit_capi,
+     METH_VARARGS,
+     PyDoc_STR("kmeans algorithem")},
+    {NULL, NULL, 0, NULL}};
+
+static struct PyModuleDef moduledef =
+    {
+        PyModuleDef_HEAD_INIT,
+        "mykmeanssp",
+        NULL,
+        -1,
+        kmeansMethods};
+
+PyMODINIT_FUNC
+PyInit_mykmeanssp(void)
+{
+    PyObject *m;
+    m = PyModule_Create(&moduledef);
+    if (!m)
+    {
+        return NULL;
+    }
+    return m;
 }
