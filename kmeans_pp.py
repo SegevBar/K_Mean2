@@ -13,7 +13,7 @@ def validateArgs(k, epsilon, maxIterations = 300):
         if '.' in maxIterations or int(maxIterations) < 0:
             print("Invalid Input!")
             quit()
-    if int(epsilon) <= 0: ##TO SELF - Check if I need to add more testings
+    if int(epsilon) < 0: ##TO SELF - Check if I need to add more testings
         print("Invalid Input!")
         quit()
     return int(maxIterations)
