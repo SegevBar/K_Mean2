@@ -7,7 +7,7 @@
 
 typedef struct 
 {
-    int vector_count;
+    int vectors_count;
     double* vectors_sum;
     double* centroid;
 } Cluster;
@@ -37,13 +37,12 @@ static PyObject *kmeans(int k, int max_iter, int dim_py, int N_py, PyObject *cen
     int j = 0;
 
     /*convert k centroids from python to C*/
-    cnt = 0;
     clusters = (Cluster *)calloc(k, sizeof(struct Cluster));
     if (clusters == NULL) {
         printf("An Error Has Occurred\n");
         exit(1);
     }
-    
+
     for (i = 0; i < k; i++){
         clusters[i].centroid = (double *)calloc(dim, sizeof(double));
         if (clusters[i].centroid == NULL) {
@@ -51,15 +50,16 @@ static PyObject *kmeans(int k, int max_iter, int dim_py, int N_py, PyObject *cen
             exit(1);
         }
 
-        memcpy(clusters[i].centroid, vectors[PyLong_AsLong(PyList_GetItem(centroids_locations, cnt))], sizeof(double) * dim); 
-        
-        clusters[i].s = 0;
+        for (j = 0; j < dim; j++){
+            clusters[i].centroid[j] = PyFloat_AsDouble(PyList_GetItem(centroids_py, cnt));
+        }
+
+        clusters[i].vectors_count = 0;
         clusters[i].vectors_sum = (double *)calloc(dim, sizeof(double));
         if (clusters[i].vectors_sum == NULL){
             printf("An Error Has Occurred\n");
             exit(1);
         }
-        cnt++;
     }
 
     /*main loop*/
@@ -68,7 +68,7 @@ static PyObject *kmeans(int k, int max_iter, int dim_py, int N_py, PyObject *cen
 
         /*find current vector cluster*/
         for (i = 0; i < N; i++) {
-            curr_vector = (double*)calloc(dim, sizeof(*curr_vector[i]));
+            curr_vector = (double*)calloc(dim, sizeof(double));
             if (currVector == NULL) {
                 printf("An Error Has Occurred\n");
                 exit(1);
@@ -146,7 +146,7 @@ int updateCentroids(Cluster* clusters, int k, int dim) {
             exit(1);
         }
         for (j = 0; j < dim; j++) {
-            new_centroid[j] = (clusters[i].vectors_sum[j]/clusters[i].s);
+            new_centroid[j] = (clusters[i].vectors_sum[j]/clusters[i].vectors_count);
         }
         dist = sqrt(calcDistance(clusters[i].centroid, new_centroid, dim));
 
@@ -216,7 +216,7 @@ static PyMethodDef kmeansMethods[] = {
     {"fit",
      (PyCFunction)fit_capi,
      METH_VARARGS,
-     PyDoc_STR("kmeans algorithem")},
+     PyDoc_STR("kmeans algorithm")},
     {NULL, NULL, 0, NULL}};
 
 static struct PyModuleDef moduledef =
