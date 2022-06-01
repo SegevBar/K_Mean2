@@ -54,8 +54,8 @@ fOne.close
 fTwo.close
 
 #convert input files to dataFrames and set columns titles
-fileOneDataPoints = pd.read_csv(fOne, names = ["col" + str(i) for i in range(len(lenFOne))])
-fileTwoDataPoints = pd.read_csv(fTwo, names = ["col" + str(i) for i in range(len(lenFTwo))])
+fileOneDataPoints = pd.read_csv(fOne, names = ["col" + str(i) for i in range(lenFOne)])
+fileTwoDataPoints = pd.read_csv(fTwo, names = ["col" + str(i) for i in range(lenFTwo)])
 fileOneDataPoints = pd.DataFrame(fileOneDataPoints)
 fileTwoDataPoints = pd.DataFrame(fileTwoDataPoints)
 
