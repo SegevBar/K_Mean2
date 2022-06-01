@@ -37,7 +37,7 @@ static PyObject *kmeans(int k, int max_iter, int dim_py, int N_py, PyObject *cen
     int j = 0;
 
     /*convert k centroids from python to C*/
-    clusters = (Cluster *)calloc(k, sizeof(struct Cluster));
+    clusters = (Cluster *)calloc(k, sizeof(Cluster));
     if (clusters == NULL) {
         printf("An Error Has Occurred\n");
         exit(1);
@@ -69,7 +69,7 @@ static PyObject *kmeans(int k, int max_iter, int dim_py, int N_py, PyObject *cen
         /*find current vector cluster*/
         for (i = 0; i < N; i++) {
             curr_vector = (double*)calloc(dim, sizeof(double));
-            if (currVector == NULL) {
+            if (curr_vector == NULL) {
                 printf("An Error Has Occurred\n");
                 exit(1);
             }
@@ -86,7 +86,7 @@ static PyObject *kmeans(int k, int max_iter, int dim_py, int N_py, PyObject *cen
         
         /*reset*/
         for(i = 0; i < k; i++){
-            clusters[i].s = 0;
+            clusters[i].vectors_count = 0;
             for(j = 0; j < dim; j++){
                 clusters[i].vectors_sum[j] = 0;
             }
@@ -94,7 +94,7 @@ static PyObject *kmeans(int k, int max_iter, int dim_py, int N_py, PyObject *cen
         cnt++;
     }
 
-    return cToPy(clusters, k, dim, vectors, N);
+    return cToPy(clusters, k, dim, N);
 }
 
 void calcCluster(double* vector, Cluster* clusters, int k, int dim) {
@@ -114,7 +114,7 @@ void calcCluster(double* vector, Cluster* clusters, int k, int dim) {
     }
     
     /*update closest cluster*/
-    clusters[closest_cluster].s++; 
+    clusters[closest_cluster].vectors_count++; 
     for (j = 0; j < dim; j++) {
         clusters[closest_cluster].vectors_sum[j] += vector[j];
     }
@@ -164,15 +164,15 @@ int updateCentroids(Cluster* clusters, int k, int dim) {
 }
 
 /*convert centroids from C to python*/
-PyObject *cToPy(Cluster *clusters, int k, int dim, double **vectors, int N){
+PyObject *cToPy(Cluster *clusters, int k, int dim, int N){
     PyObject *clusters_py;
     int i = 0;
     int j = 0;
     PyObject *value;
+    PyObject *curr_vector;
 
     clusters_py = PyList_New(k);
     for (i = 0; i < k; i++){
-        PyObject *curr_vector;
         curr_vector = PyList_New(dim);
         for (j = 0; j < dim; j++){
             value = Py_BuildValue("d", clusters[i].centroid[j]);
@@ -198,17 +198,17 @@ static PyObject *fit_capi(PyObject *self, PyObject *args){
     int max_iter;
     int dim_py;
     int N_py;
-    PyObject *centroids_locations;
+    PyObject *centroids;
     PyObject *vectors_py;
 
-    if (!(PyArg_ParseTuple(args, "iiiiOO", &k, &max_iter, &dim_py, &N_py, &centroids_locations, &vectors_py))){
+    if (!(PyArg_ParseTuple(args, "iiiiOO", &k, &max_iter, &dim_py, &N_py, &centroids, &vectors_py))){
         return NULL;
     }
-    if (!PyList_Check(centroids_locations) || !PyList_Check(vectors_py)){
+    if (!PyList_Check(centroids) || !PyList_Check(vectors_py)){
         return NULL;
     }
 
-    return Py_BuildValue("O", kmeans(k, max_iter, dim_py, N_py, centroids_locations, vectors_py));
+    return Py_BuildValue("O", kmeans(k, max_iter, dim_py, N_py, centroids, vectors_py));
 }
 
 /*building mykmeanssp module*/
