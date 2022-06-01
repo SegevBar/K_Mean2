@@ -17,7 +17,7 @@ static PyObject *kmeans(int k, int max_iter, int dim_py, int N_py, PyObject *cen
 void calcCluster(double* vector, Cluster* clusters, int k, int dim);
 double calcDistance(double* vector1, double* vector2, int dim);
 int updateCentroids(Cluster* clusters, int k, int dim);
-PyObject *cToPy(Cluster *clusters, int k, int dim, int N)
+PyObject *cToPyObject(Cluster *clusters, int k, int dim, int N)
 static PyObject *fit_capi(PyObject *self, PyObject *args);
 
 
@@ -107,7 +107,7 @@ static PyObject *kmeans(int k, int max_iter, int dim_py, int N_py, PyObject *cen
         cnt++;
     }
 
-    return cToPy(clusters, k, dim, N);
+    return cToPyObject(clusters, k, dim, N);
 }
 
 void calcCluster(double* vector, Cluster* clusters, int k, int dim)
@@ -188,17 +188,18 @@ int updateCentroids(Cluster* clusters, int k, int dim)
 }
 
 /*convert centroids from C to python*/
-PyObject *cToPy(Cluster *clusters, int k, int dim, int N)
+PyObject *cToPyObject(Cluster *clusters, int k, int dim, int N)
 {
     PyObject *clusters_py;
     int i = 0;
     int j = 0;
     PyObject *value;
-    PyObject *curr_vector;
+    
 
     clusters_py = PyList_New(k);
     for (i = 0; i < k; i++)
     {
+        PyObject *curr_vector;
         curr_vector = PyList_New(dim);
         for (j = 0; j < dim; j++)
         {
