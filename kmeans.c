@@ -194,12 +194,11 @@ PyObject *cToPyObject(Cluster *clusters, int k, int dim, int N)
     int i = 0;
     int j = 0;
     PyObject *value;
-    
+    PyObject *curr_vector;
 
     clusters_py = PyList_New(k);
     for (i = 0; i < k; i++)
     {
-        PyObject *curr_vector;
         curr_vector = PyList_New(dim);
         for (j = 0; j < dim; j++)
         {
