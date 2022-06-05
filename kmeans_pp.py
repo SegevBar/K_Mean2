@@ -127,7 +127,8 @@ for vec in mergedDataPointsNP:
 
 for centroid in centroidsLoc:
     for j in range(dim):
-        print(dataPoints1D[centroid+j] + " ,")
+        print(dataPoints1D[centroid+j])
+        print(" ,")
     print("\n")
 
 #use c module and call the fit() method
