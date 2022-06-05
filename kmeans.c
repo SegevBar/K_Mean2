@@ -71,6 +71,13 @@ static PyObject *kmeans(int k, int max_iter, int dim_py, int N_py, PyObject *cen
         }
     }
 
+    for (i = 0; i < k; i++) {
+        for (j = 0; j < dim; j++) {
+            printf("%lf ,", clusters[i].centroid[j]);
+        }
+        printf("\n");
+    }
+
     /*main loop*/
     cnt = 0;
     while ((cnt < max_iter) && (!has_converged))
