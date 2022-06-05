@@ -59,6 +59,8 @@ fileTwoDataPoints = pd.read_csv(fTwo, names = ["col" + str(i) for i in range(len
 fileOneDataPoints = pd.DataFrame(fileOneDataPoints)
 fileTwoDataPoints = pd.DataFrame(fileTwoDataPoints)
 
+print(list(fileOneDataPoints.columns))
+
 #merge data files by first column
 mergedDataPoints = fileOneDataPoints.merge(fileTwoDataPoints, on='c0')
 mergedDataPoints.sort_values(by='c0')
