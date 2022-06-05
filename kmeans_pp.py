@@ -68,6 +68,10 @@ mergedDataPoints.set_index('col0')
 distances = [-1.0 for i in range(len(mergedDataPoints))]
 probs = [0.0 for i in range(len(mergedDataPoints))]
 mergedDataPointsNP = mergedDataPoints.to_numpy()
+print("DF:")
+print(mergedDataPoints)
+print("NP")
+print(mergedDataPointsNP)
 centroids = np.array([[0.0 for i in range(len(mergedDataPointsNP[0]))] for i in range(k)])
 centroidsLoc = [0 for i in range(k)]
 
