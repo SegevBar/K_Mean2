@@ -125,6 +125,9 @@ for vec in mergedDataPointsNP:
     for i in range(dim):
         dataPoints1D.append(vec[i])
 
+for i in centroidsLoc:
+    print(dataPoints1D[i])
+
 #use c module and call the fit() method
 finalCentroids = np.array(mykmeanssp.fit(k, maxIterations, dim, dataPointsSize, centroidsLoc, dataPoints1D))
 
