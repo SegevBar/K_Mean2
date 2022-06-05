@@ -59,8 +59,6 @@ fileTwoDataPoints = pd.read_csv(fTwo, names = ["col" + str(i) for i in range(len
 fileOneDataPoints = pd.DataFrame(fileOneDataPoints)
 fileTwoDataPoints = pd.DataFrame(fileTwoDataPoints)
 
-print(list(fileOneDataPoints.columns))
-
 #merge data files by first column
 mergedDataPoints = fileOneDataPoints.merge(fileTwoDataPoints, on='col0')
 mergedDataPoints.sort_values(by='col0')
@@ -70,7 +68,7 @@ mergedDataPoints.set_index('col0')
 distances = [-1.0 for i in range(len(mergedDataPoints))]
 probs = [0.0 for i in range(len(mergedDataPoints))]
 mergedDataPointsNP = mergedDataPoints.to_numpy()
-centroids = np.array([0.0 for i in range(len(mergedDataPointsNP[0])) for i in range(k)])
+centroids = np.array([[0.0 for i in range(len(mergedDataPointsNP[0]))] for i in range(k)])
 centroidsLoc = [0 for i in range(k)]
 
 #reassure the our input file(s) is valid for clustering
