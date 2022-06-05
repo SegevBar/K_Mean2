@@ -57,7 +57,7 @@ static PyObject *kmeans(int k, int max_iter, int dim_py, int N_py, PyObject *cen
             exit(1);
         }
 
-        centroid_index = (int)PyLong_AsLong(PyList_GetItem(centroids_py, j));
+        centroid_index = (int)PyLong_AsLong(PyList_GetItem(centroids_py, i));
         cnt = centroid_index*dim;
 
         for (j = 0; j < dim; j++)
