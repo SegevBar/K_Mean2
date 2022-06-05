@@ -68,10 +68,6 @@ mergedDataPoints.set_index('col0')
 distances = [-1.0 for i in range(len(mergedDataPoints))]
 probs = [0.0 for i in range(len(mergedDataPoints))]
 mergedDataPointsNP = mergedDataPoints.to_numpy()
-print("DF:")
-print(mergedDataPoints)
-print("NP")
-print(mergedDataPointsNP)
 centroids = np.array([[0.0 for i in range(len(mergedDataPointsNP[0]))] for i in range(k)])
 centroidsLoc = [0 for i in range(k)]
 
@@ -128,9 +124,6 @@ dataPoints1D = []
 for vec in mergedDataPointsNP:
     for i in range(dim):
         dataPoints1D.append(vec[i])
-
-for i in centroidsLoc:
-    print(dataPoints1D[i])
 
 #use c module and call the fit() method
 finalCentroids = np.array(mykmeanssp.fit(k, maxIterations, dim, dataPointsSize, centroidsLoc, dataPoints1D))
