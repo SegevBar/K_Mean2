@@ -62,9 +62,9 @@ fileTwoDataPoints = pd.DataFrame(fileTwoDataPoints)
 print(list(fileOneDataPoints.columns))
 
 #merge data files by first column
-mergedDataPoints = fileOneDataPoints.merge(fileTwoDataPoints, on='c0')
-mergedDataPoints.sort_values(by='c0')
-mergedDataPoints.set_index('c0')
+mergedDataPoints = fileOneDataPoints.merge(fileTwoDataPoints, on='col0')
+mergedDataPoints.sort_values(by='col0')
+mergedDataPoints.set_index('col0')
 
 #prepare other required data structs
 distances = [-1.0 for i in range(len(mergedDataPoints))]
