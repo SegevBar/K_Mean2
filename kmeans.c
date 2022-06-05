@@ -37,6 +37,7 @@ static PyObject *kmeans(int k, int max_iter, int dim_py, int N_py, PyObject *cen
     int cnt = 0;
     int i = 0;
     int j = 0;
+    int centroid_index;
 
     /*convert k centroids from python to C*/
     clusters = (Cluster *)calloc(k, sizeof(Cluster));
@@ -57,7 +58,8 @@ static PyObject *kmeans(int k, int max_iter, int dim_py, int N_py, PyObject *cen
 
         for (j = 0; j < dim; j++)
         {
-            clusters[i].centroid[j] = PyFloat_AsDouble(PyList_GetItem(centroids_py, dim*PyList_GetItem(centroids_py, j)));
+            centroid_index = (int)PyLong_AsLong(PyList_GetItem(centroids_py, j));
+            clusters[i].centroid[j] = PyFloat_AsDouble(PyList_GetItem(centroids_py, dim*centroid_index));
         }
 
         clusters[i].vectors_count = 0;
