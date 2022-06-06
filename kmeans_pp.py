@@ -130,6 +130,9 @@ for vec in mergedDataPointsNP:
 
 #use c module and call the fit() method
 finalCentroids = np.array(mykmeanssp.fit(k, maxIterations, epsilon, dim, dataPointsSize, centroidsLoc, dataPoints1D))
+if finalCentroids == None:
+    print("An Error Has Occurred")
+    quit()
 
 print(*centroidsLoc, sep=",")
 for centroid in finalCentroids:
