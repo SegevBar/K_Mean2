@@ -110,7 +110,7 @@ def kmeanspp():
         minDistance(i)
         calcProbability()
         randomIndex = (int)(np.random.choice(mergedDataPoints.index, p = probs))
-        print("centroid index :" + randomIndex)
+        print("centroid index : " + str(randomIndex))
         centroidsLoc[i] = randomIndex
         centroids[i] = np.ndarray.copy(mergedDataPointsNP[randomIndex])
 
