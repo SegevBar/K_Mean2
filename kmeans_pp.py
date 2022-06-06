@@ -61,14 +61,18 @@ fileTwoDataPoints = pd.DataFrame(fileTwoDataPoints)
 
 #merge data files by first column
 mergedDataPoints = fileOneDataPoints.merge(fileTwoDataPoints, on='col0')
+
 print("before")
-for i in range(len(mergedDataPoints)):
-    print(mergedDataPoints.at(i, 0))
+first_column = mergedDataPoints.iloc[:, 0]
+print(first_column)
+
 mergedDataPoints.sort_values(by=["col0"])
 mergedDataPoints.set_index('col0')
+
 print("after")
-for i in range(len(mergedDataPoints)):
-    print(mergedDataPoints.at(i, 0))
+first_column = mergedDataPoints.iloc[:, 0]
+print(first_column)
+
 if (mergedDataPoints.empty or len(mergedDataPoints.columns) == 0):
     print("Invalid Input!")
     quit()
