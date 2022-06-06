@@ -13,10 +13,10 @@ typedef struct
 } Cluster;
 
 /*Prototypes*/
-static PyObject *kmeans(int k, int max_iter, int dim_py, int N_py, PyObject *centroids_py, PyObject *vectors_py);
+static PyObject *kmeans(int k, int max_iter_py, int epsilon_py, int dim_py, int N_py, PyObject *centroids_py, PyObject *vectors_py)
 void calcCluster(double* vector, Cluster* clusters, int k, int dim);
 double calcDistance(double* vector1, double* vector2, int dim);
-int updateCentroids(Cluster* clusters, int k, int dim);
+int updateCentroids(Cluster* clusters, int k, int dim, double epsilon);
 PyObject *cToPyObject(Cluster *clusters, int k, int dim, int N);
 static PyObject *fit_capi(PyObject *self, PyObject *args);
 
@@ -27,10 +27,11 @@ int main(int argc, char *argv[])
 }
 
 
-static PyObject *kmeans(int k, int max_iter_py, int dim_py, int N_py, PyObject *centroids_py, PyObject *vectors_py)
+static PyObject *kmeans(int k, int max_iter_py, int epsilon_py, int dim_py, int N_py, PyObject *centroids_py, PyObject *vectors_py)
 {
     int N = N_py;
     int max_iter = max_iter_py;
+    int epsilon = epsilon_py;
     int dim = dim_py;
     Cluster *clusters;
     double *curr_vector;
@@ -101,7 +102,7 @@ static PyObject *kmeans(int k, int max_iter_py, int dim_py, int N_py, PyObject *
         }
         
         /*update centroids*/
-        has_converged = updateCentroids(clusters, k, dim);
+        has_converged = updateCentroids(clusters, k, dim, epsilon);
         
         /*reset*/
         for(i = 0; i < k; i++)
@@ -161,9 +162,8 @@ double calcDistance(double* vector1, double* vector2, int dim)
     return sum;
 }
 
-int updateCentroids(Cluster* clusters, int k, int dim)
+int updateCentroids(Cluster* clusters, int k, int dim, double epsilon)
 {
-    double epsilon = 0.001;
     int i = 0;
     int j = 0;
     int has_converged = 1;
