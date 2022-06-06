@@ -13,7 +13,7 @@ typedef struct
 } Cluster;
 
 /*Prototypes*/
-static PyObject *kmeans(int k, int max_iter_py, int epsilon_py, int dim_py, int N_py, PyObject *centroids_py, PyObject *vectors_py)
+static PyObject *kmeans(int k, int max_iter_py, int epsilon_py, int dim_py, int N_py, PyObject *centroids_py, PyObject *vectors_py);
 void calcCluster(double* vector, Cluster* clusters, int k, int dim);
 double calcDistance(double* vector1, double* vector2, int dim);
 int updateCentroids(Cluster* clusters, int k, int dim, double epsilon);
