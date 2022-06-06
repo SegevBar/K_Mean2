@@ -60,7 +60,7 @@ fileOneDataPoints = pd.DataFrame(fileOneDataPoints)
 fileTwoDataPoints = pd.DataFrame(fileTwoDataPoints)
 
 #merge data files by first column
-mergedDataPoints = fileOneDataPoints.merge(fileTwoDataPoints, on='col0')
+mergedDataPoints = fileOneDataPoints.merge(fileTwoDataPoints,how="inner", on='col0')
 mergedDataPoints = mergedDataPoints.sort_values(by=["col0"])
 mergedDataPoints = mergedDataPoints.set_index('col0')
 
