@@ -42,7 +42,6 @@ static PyObject *kmeans(int k, int max_iter_py, double epsilon_py, int dim_py, i
     int curr = 0;
     int centroid_index;
     
-    printf("%lf \n", epsilon);
 
     /*convert k centroids from python to C*/
     clusters = (Cluster *)calloc(k, sizeof(Cluster));
@@ -77,14 +76,6 @@ static PyObject *kmeans(int k, int max_iter_py, double epsilon_py, int dim_py, i
             printf("An Error Has Occurred\n");
             exit(1);
         }
-    }
-
-    printf("initial clusters \n");
-    for (i = 0; i < k; i++) {
-        for (j = 0; j < dim; j++) {
-            printf("%lf ,", clusters[i].centroid[j]);
-        }
-        printf("\n");
     }
 
     /*main loop*/
@@ -124,17 +115,6 @@ static PyObject *kmeans(int k, int max_iter_py, double epsilon_py, int dim_py, i
             }
         }
         cnt++;
-    }
-    printf("%d \n", max_iter);
-    printf("%d \n", cnt);
-    printf("%d \n", curr);
-    printf("%d \n", has_converged);
-
-    for (i = 0; i < k; i++) {
-        for (j = 0; j < dim; j++) {
-            printf("%lf ,", clusters[i].centroid[j]);
-        }
-        printf("\n");
     }
 
     return cToPyObject(clusters, k, dim, N);
