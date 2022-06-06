@@ -97,6 +97,7 @@ def calcProbability():
 
 #main stuff:
 def kmeanspp():
+    cnt = 1
     np.random.seed(0)
 
     #choose a random datapoint to be the first centroid
@@ -111,10 +112,11 @@ def kmeanspp():
         calcProbability()
         randomIndex = (int)(np.random.choice(mergedDataPoints.index, p = probs))
         print("centroid index : " + str(randomIndex))
-        centroidsLoc[i] = randomIndex
+        centroidsLoc[cnt] = randomIndex
         centroids[i] = np.ndarray.copy(mergedDataPointsNP[randomIndex])
 
         i += 1
+        cnt += 1
 
 #call Algorithm 1:
 kmeanspp()
