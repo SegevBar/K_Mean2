@@ -61,7 +61,7 @@ fileTwoDataPoints = pd.DataFrame(fileTwoDataPoints)
 
 #merge data files by first column
 mergedDataPoints = fileOneDataPoints.merge(fileTwoDataPoints, on='col0')
-mergedDataPoints.sort_values(by='col0')
+mergedDataPoints.sort_values(by=['col0'])
 mergedDataPoints.set_index('col0')
 
 if (mergedDataPoints.empty or len(mergedDataPoints.columns) == 0):
@@ -97,7 +97,6 @@ def calcProbability():
 
 #main stuff:
 def kmeanspp():
-    cnt = 1
     np.random.seed(0)
 
     #choose a random datapoint to be the first centroid
@@ -112,11 +111,10 @@ def kmeanspp():
         calcProbability()
         randomIndex = (int)(np.random.choice(mergedDataPoints.index, p = probs))
         print("centroid index : " + str(randomIndex))
-        centroidsLoc[cnt] = randomIndex
+        centroidsLoc[i] = randomIndex
         centroids[i] = np.ndarray.copy(mergedDataPointsNP[randomIndex])
 
         i += 1
-        cnt += 1
 
 #call Algorithm 1:
 kmeanspp()
