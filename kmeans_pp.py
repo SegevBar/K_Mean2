@@ -70,8 +70,8 @@ if (mergedDataPoints.empty or len(mergedDataPoints.columns) == 0):
 
 #prepare other required data structs
 mergedDataPointsNP = mergedDataPoints.to_numpy()
-distances = [-1.0 for i in range(len(mergedDataPointsNP))]
-probs = [0.0 for i in range(len(mergedDataPointsNP))]
+distances = [-1.0 for i in range(len(mergedDataPoints))]
+probs = [0.0 for i in range(len(mergedDataPoints))]
 centroids = np.array([[0.0 for i in range(len(mergedDataPointsNP[0]))] for i in range(k)])
 centroidsLoc = [0 for i in range(k)]
 
@@ -79,6 +79,9 @@ centroidsLoc = [0 for i in range(k)]
 if len(mergedDataPointsNP) <= k:
     print("Invalid Input!")
     quit()
+
+for i in range(len(mergedDataPointsNP)):
+    print(mergedDataPointsNP[i][0])
 
 #methods for main loop:
 def minDistance(D):
@@ -110,7 +113,6 @@ def kmeanspp():
         minDistance(i)
         calcProbability()
         randomIndex = (int)(np.random.choice(mergedDataPoints.index, p = probs))
-        print("centroid index : " + str(mergedDataPointsNP[randomIndex][0]))
         centroidsLoc[i] = randomIndex
         centroids[i] = np.ndarray.copy(mergedDataPointsNP[randomIndex])
 
@@ -118,6 +120,9 @@ def kmeanspp():
 
 #call Algorithm 1:
 kmeanspp()
+
+for i in range(len(centroids)):
+    print("centroid index : " + str(mergedDataPointsNP[i][0]))
 
 #set arguments for c extension use
 dim = len(centroids[0])
