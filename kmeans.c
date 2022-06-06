@@ -236,13 +236,14 @@ PyObject *cToPyObject(Cluster *clusters, int k, int dim, int N)
 static PyObject *fit_capi(PyObject *self, PyObject *args)
 {
     int k;
-    int max_iter;
+    int max_iter_py;
+    double epsilon;
     int dim_py;
     int N_py;
     PyObject *centroids;
     PyObject *vectors_py;
 
-    if (!(PyArg_ParseTuple(args, "iiiiOO", &k, &max_iter, &dim_py, &N_py, &centroids, &vectors_py)))
+    if (!(PyArg_ParseTuple(args, "iidiiOO", &k, &max_iter_py, &epsilon, &dim_py, &N_py, &centroids, &vectors_py)))
     {
         return NULL;
     }
@@ -251,7 +252,7 @@ static PyObject *fit_capi(PyObject *self, PyObject *args)
         return NULL;
     }
 
-    return Py_BuildValue("O", kmeans(k, max_iter, dim_py, N_py, centroids, vectors_py));
+    return Py_BuildValue("O", kmeans(k, max_iter_py, epsilon, dim_py, N_py, centroids, vectors_py));
 }
 
 /*building mykmeanssp module*/
