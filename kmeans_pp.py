@@ -30,7 +30,6 @@ if len(sys.argv) == 6:
     maxIterations = sys.argv[2]
     epsilon = sys.argv[3]
     maxIterations = validateArgs(k, epsilon, maxIterations)
-    epsilon = float(epsilon)
     inputFileOne = sys.argv[4]
     inputFileTwo = sys.argv[5]
 elif len(sys.argv) == 5:
@@ -122,6 +121,7 @@ kmeanspp()
 #set arguments for c extension use
 dim = len(centroids[0])
 dataPointsSize = len(mergedDataPointsNP)
+epsilon = float(epsilon)
 
 #transform to 1D list of data points for the c extension
 dataPoints1D = []
