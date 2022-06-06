@@ -31,7 +31,7 @@ static PyObject *kmeans(int k, int max_iter, int dim_py, int N_py, PyObject *cen
 {
     int N = N_py;
     int dim = dim_py;
-    Cluster* clusters;
+    Cluster *clusters;
     double *curr_vector;
     int has_converged = 0;
     int cnt = 0;

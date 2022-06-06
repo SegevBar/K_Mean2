@@ -13,7 +13,7 @@ def validateArgs(k, epsilon, maxIterations = 300):
         if '.' in maxIterations or int(maxIterations) < 0:
             print("Invalid Input!")
             quit()
-    if int(epsilon) < 0: ##TO SELF - Check if I need to add more testings
+    if int(epsilon) < 0: 
         print("Invalid Input!")
         quit()
     return int(maxIterations)
@@ -54,8 +54,8 @@ fOne.close
 fTwo.close
 
 #convert input files to dataFrames and set columns titles
-fileOneDataPoints = pd.read_csv(fOne, names = ["col" + str(i) for i in range(lenFOne)])
-fileTwoDataPoints = pd.read_csv(fTwo, names = ["col" + str(i) for i in range(lenFTwo)])
+fileOneDataPoints = pd.read_csv(inputFileOne, names = ["col" + str(i) for i in range(lenFOne)])
+fileTwoDataPoints = pd.read_csv(inputFileTwo, names = ["col" + str(i) for i in range(lenFTwo)])
 fileOneDataPoints = pd.DataFrame(fileOneDataPoints)
 fileTwoDataPoints = pd.DataFrame(fileTwoDataPoints)
 
@@ -64,10 +64,14 @@ mergedDataPoints = fileOneDataPoints.merge(fileTwoDataPoints, on='col0')
 mergedDataPoints.sort_values(by='col0')
 mergedDataPoints.set_index('col0')
 
+if (mergedDataPoints.empty or len(mergedDataPoints.columns) == 0):
+    print("Invalid Input!")
+    quit()
+
 #prepare other required data structs
-distances = [-1.0 for i in range(len(mergedDataPoints))]
-probs = [0.0 for i in range(len(mergedDataPoints))]
 mergedDataPointsNP = mergedDataPoints.to_numpy()
+distances = [-1.0 for i in range(len(mergedDataPointsNP))]
+probs = [0.0 for i in range(len(mergedDataPointsNP))]
 centroids = np.array([[0.0 for i in range(len(mergedDataPointsNP[0]))] for i in range(k)])
 centroidsLoc = [0 for i in range(k)]
 
@@ -77,7 +81,6 @@ if len(mergedDataPointsNP) <= k:
     quit()
 
 #methods for main loop:
-
 def minDistance(D):
     for idx in range(len(mergedDataPointsNP)):
         curDistance = pow(np.linalg.norm(mergedDataPointsNP[idx] - centroids[D-1]), 2)
@@ -89,7 +92,7 @@ def calcProbability():
     sum = 0.0
     for dist in distances:
         sum += dist
-    for i in range(len(distances)):
+    for i in range(len(mergedDataPointsNP)):
         probs[i] = distances[i] / sum
 
 #main stuff:
@@ -107,6 +110,7 @@ def kmeanspp():
         minDistance(i)
         calcProbability()
         randomIndex = (int)(np.random.choice(mergedDataPoints.index, p = probs))
+        print("centroid index :" + randomIndex)
         centroidsLoc[i] = randomIndex
         centroids[i] = np.ndarray.copy(mergedDataPointsNP[randomIndex])
 
