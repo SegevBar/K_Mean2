@@ -124,10 +124,14 @@ def kmeanspp():
 #call Algorithm 1:
 kmeanspp()
 
+
 #set arguments for c extension use
 dim = len(centroids[0])
 dataPointsSize = len(mergedDataPointsNP)
 epsilon = float(epsilon)
+
+for i in range(len(centroids)):
+    print(centroids[i])
 
 #transform to 1D list of data points for the c extension
 dataPoints1D = []
