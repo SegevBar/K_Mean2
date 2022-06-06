@@ -243,7 +243,7 @@ static PyObject *fit_capi(PyObject *self, PyObject *args)
     PyObject *centroids;
     PyObject *vectors_py;
 
-    if (!(PyArg_ParseTuple(args, "iidiiOO", &k, &max_iter_py, &epsilon, &dim_py, &N_py, &centroids, &vectors_py)))
+    if (!(PyArg_ParseTuple(args, "iifiiOO", &k, &max_iter_py, &epsilon, &dim_py, &N_py, &centroids, &vectors_py)))
     {
         return NULL;
     }
