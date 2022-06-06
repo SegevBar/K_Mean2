@@ -79,6 +79,14 @@ static PyObject *kmeans(int k, int max_iter_py, double epsilon_py, int dim_py, i
         }
     }
 
+    printf("initial clusters \n");
+    for (i = 0; i < k; i++) {
+        for (j = 0; j < dim; j++) {
+            printf("%lf ,", clusters[i].centroid[j]);
+        }
+        printf("\n");
+    }
+
     /*main loop*/
     cnt = 0;
     curr = 0;
