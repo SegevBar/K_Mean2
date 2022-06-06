@@ -63,7 +63,6 @@ fileTwoDataPoints = pd.DataFrame(fileTwoDataPoints)
 mergedDataPoints = fileOneDataPoints.merge(fileTwoDataPoints,how="inner", on='col0')
 mergedDataPoints = mergedDataPoints.sort_values(by=["col0"])
 mergedDataPoints = mergedDataPoints.set_index('col0')
-print(mergedDataPoints.index)
 
 if (mergedDataPoints.empty or len(mergedDataPoints.columns) == 0):
     print("Invalid Input!")
@@ -101,17 +100,23 @@ def kmeanspp():
     np.random.seed(0)
 
     #choose a random datapoint to be the first centroid
-    randomIndex = (int)(np.random.choice(mergedDataPoints.index))
-    centroidsLoc[0] = randomIndex
+    # randomIndex = (int)(np.random.choice(mergedDataPoints.index))
+    # centroidsLoc[0] = randomIndex
+    # centroids[0] = np.ndarray.copy(mergedDataPointsNP[randomIndex])
+
+    indexes = [i for i in range(len(mergedDataPoints))]
+    key_indexes = mergedDataPoints['col0'].tolist()
+    randomIndex = (int)(np.random.choice(indexes))
+    centroidsLoc[0] = key_indexes[randomIndex]
     centroids[0] = np.ndarray.copy(mergedDataPointsNP[randomIndex])
-    
+
     #algorithm loop
     i = 1
     while (i != k):
         minDistance(i)
         calcProbability()
-        randomIndex = (int)(np.random.choice(mergedDataPoints.index, p = probs))
-        centroidsLoc[i] = randomIndex
+        randomIndex = (int)(np.random.choice(indexes, p = probs))
+        centroidsLoc[i] = key_indexes[randomIndex]
         centroids[i] = np.ndarray.copy(mergedDataPointsNP[randomIndex])
 
         i += 1
