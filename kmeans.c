@@ -122,6 +122,13 @@ static PyObject *kmeans(int k, int max_iter_py, double epsilon_py, int dim_py, i
     printf("%d \n", curr);
     printf("%d \n", has_converged);
 
+    for (i = 0; i < k; i++) {
+        for (j = 0; j < dim; j++) {
+            printf("%lf ,", clusters[i].centroid[j]);
+        }
+        printf("\n");
+    }
+
     return cToPyObject(clusters, k, dim, N);
 }
 
