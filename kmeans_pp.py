@@ -140,4 +140,4 @@ finalCentroids = np.array(mykmeanssp.fit(k, maxIterations, epsilon, dim, dataPoi
 
 print(*centroidsLoc, sep=",")
 for centroid in finalCentroids:
-    print(*[np.round(num, decimals=4) for num in centroid], sep=",")
+    print(*["{:.4f}".format(num) for num in centroid], sep=",")
