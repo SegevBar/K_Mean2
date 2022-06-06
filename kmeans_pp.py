@@ -63,6 +63,7 @@ fileTwoDataPoints = pd.DataFrame(fileTwoDataPoints)
 mergedDataPoints = fileOneDataPoints.merge(fileTwoDataPoints,how="inner", on='col0')
 mergedDataPoints = mergedDataPoints.sort_values(by=["col0"])
 mergedDataPoints = mergedDataPoints.set_index('col0')
+print(mergedDataPoints.index)
 
 if (mergedDataPoints.empty or len(mergedDataPoints.columns) == 0):
     print("Invalid Input!")
