@@ -61,17 +61,8 @@ fileTwoDataPoints = pd.DataFrame(fileTwoDataPoints)
 
 #merge data files by first column
 mergedDataPoints = fileOneDataPoints.merge(fileTwoDataPoints, on='col0')
-
-print("before")
-first_column = mergedDataPoints.iloc[:, 0]
-print(first_column)
-
 mergedDataPoints = mergedDataPoints.sort_values(by=["col0"])
 mergedDataPoints = mergedDataPoints.set_index('col0')
-
-print("after")
-first_column = mergedDataPoints.iloc[:, 0]
-print(first_column)
 
 if (mergedDataPoints.empty or len(mergedDataPoints.columns) == 0):
     print("Invalid Input!")
@@ -88,8 +79,6 @@ centroidsLoc = [0 for i in range(k)]
 if len(mergedDataPointsNP) <= k:
     print("Invalid Input!")
     quit()
-
-
 
 #methods for main loop:
 def minDistance(D):
@@ -129,9 +118,6 @@ def kmeanspp():
 #call Algorithm 1:
 kmeanspp()
 
-for i in range(len(centroids)):
-    print("centroid index : " + str(mergedDataPointsNP[i][0]))
-
 #set arguments for c extension use
 dim = len(centroids[0])
 dataPointsSize = len(mergedDataPointsNP)
@@ -141,11 +127,6 @@ dataPoints1D = []
 for vec in mergedDataPointsNP:
     for i in range(dim):
         dataPoints1D.append(vec[i])
-
-for centroid in centroidsLoc:
-    for j in range(dim):
-        print(dataPoints1D[centroid*dim+j])
-    print("\n")
 
 #use c module and call the fit() method
 finalCentroids = np.array(mykmeanssp.fit(k, maxIterations, dim, dataPointsSize, centroidsLoc, dataPoints1D))
