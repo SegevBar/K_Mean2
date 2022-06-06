@@ -100,10 +100,6 @@ def kmeanspp():
     np.random.seed(0)
 
     #choose a random datapoint to be the first centroid
-    # randomIndex = (int)(np.random.choice(mergedDataPoints.index))
-    # centroidsLoc[0] = randomIndex
-    # centroids[0] = np.ndarray.copy(mergedDataPointsNP[randomIndex])
-
     indexes = [i for i in range(len(mergedDataPoints))]
     key_indexes = mergedDataPoints.index.to_list()
     randomIndex = (int)(np.random.choice(indexes))
@@ -139,8 +135,13 @@ for vec in mergedDataPointsNP:
     for i in range(dim):
         dataPoints1D.append(vec[i])
 
+centroids1D = []
+for centroid in centroids:
+    for i in range(dim):
+        centroids1D.append(centroid[i])
+
 #use c module and call the fit() method
-finalCentroids = np.array(mykmeanssp.fit(k, maxIterations, epsilon, dim, dataPointsSize, centroidsLoc, dataPoints1D))
+finalCentroids = np.array(mykmeanssp.fit(k, maxIterations, epsilon, dim, dataPointsSize, centroids1D, dataPoints1D))
 
 print(*centroidsLoc, sep=",")
 for centroid in finalCentroids:
