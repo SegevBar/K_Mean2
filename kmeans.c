@@ -235,7 +235,7 @@ PyObject *cToPyObject(Cluster *clusters, int k, int dim, int N)
 /*fit() function. gets arguments from python to kmeans function*/
 static PyObject *fit_capi(PyObject *self, PyObject *args)
 {
-    printf("fit_capi");
+    printf("fit_capi \n");
     int k;
     int max_iter_py;
     double epsilon;
@@ -244,15 +244,17 @@ static PyObject *fit_capi(PyObject *self, PyObject *args)
     PyObject *centroids;
     PyObject *vectors_py;
 
-    if (!(PyArg_ParseTuple(args, "iifiiOO", &k, &max_iter_py, &epsilon, &dim_py, &N_py, &centroids, &vectors_py)))
+    if (!(PyArg_ParseTuple(args, "iidiiOO", &k, &max_iter_py, &epsilon, &dim_py, &N_py, &centroids, &vectors_py)))
     {
+        printf("PyArg_ParseTuple \n");
         return NULL;
     }
     if (!PyList_Check(centroids) || !PyList_Check(vectors_py))
     {
+        printf("PyList_Check \n");
         return NULL;
     }
-    printf("success");
+    printf("success \n");
     return Py_BuildValue("O", kmeans(k, max_iter_py, epsilon, dim_py, N_py, centroids, vectors_py));
 }
 
