@@ -112,6 +112,8 @@ static PyObject *kmeans(int k, int max_iter_py, int dim_py, int N_py, PyObject *
         }
         cnt++;
     }
+    printf("%d", max_iter);
+    printf("%d", cnt);
 
     return cToPyObject(clusters, k, dim, N);
 }
