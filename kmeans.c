@@ -27,9 +27,10 @@ int main(int argc, char *argv[])
 }
 
 
-static PyObject *kmeans(int k, int max_iter, int dim_py, int N_py, PyObject *centroids_py, PyObject *vectors_py)
+static PyObject *kmeans(int k, int max_iter_py, int dim_py, int N_py, PyObject *centroids_py, PyObject *vectors_py)
 {
     int N = N_py;
+    int max_iter = max_iter_py;
     int dim = dim_py;
     Cluster *clusters;
     double *curr_vector;
