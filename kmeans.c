@@ -38,6 +38,7 @@ static PyObject *kmeans(int k, int max_iter_py, int dim_py, int N_py, PyObject *
     int cnt = 0;
     int i = 0;
     int j = 0;
+    int curr = 0;
     int centroid_index;
 
     /*convert k centroids from python to C*/
@@ -77,6 +78,7 @@ static PyObject *kmeans(int k, int max_iter_py, int dim_py, int N_py, PyObject *
 
     /*main loop*/
     cnt = 0;
+    curr = 0;
     while ((cnt < max_iter) && (!has_converged))
     {
 
@@ -91,8 +93,8 @@ static PyObject *kmeans(int k, int max_iter_py, int dim_py, int N_py, PyObject *
             }
             for (j = 0; j < dim; j++)
             {
-                curr_vector[j] = PyFloat_AsDouble(PyList_GetItem(vectors_py, cnt));
-                cnt++;
+                curr_vector[j] = PyFloat_AsDouble(PyList_GetItem(vectors_py, curr));
+                curr++;
             }
             calcCluster(curr_vector, clusters, k, dim);
             free(curr_vector);
