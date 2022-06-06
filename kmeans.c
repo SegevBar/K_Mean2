@@ -116,6 +116,8 @@ static PyObject *kmeans(int k, int max_iter_py, int dim_py, int N_py, PyObject *
     }
     printf("%d \n", max_iter);
     printf("%d \n", cnt);
+    printf("%d \n", curr);
+    printf("%d \n", has_converged);
 
     return cToPyObject(clusters, k, dim, N);
 }
