@@ -40,8 +40,6 @@ static PyObject *kmeans(int k, int max_iter_py, double epsilon_py, int dim_py, i
     int i = 0;
     int j = 0;
     int curr = 0;
-    int centroid_index;
-
 
     /*convert k centroids from python to C*/
     clusters = (Cluster *)calloc(k, sizeof(Cluster));
