@@ -235,6 +235,7 @@ PyObject *cToPyObject(Cluster *clusters, int k, int dim, int N)
 /*fit() function. gets arguments from python to kmeans function*/
 static PyObject *fit_capi(PyObject *self, PyObject *args)
 {
+    printf("fit_capi");
     int k;
     int max_iter_py;
     double epsilon;
