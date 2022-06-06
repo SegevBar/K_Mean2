@@ -105,7 +105,7 @@ def kmeanspp():
     # centroids[0] = np.ndarray.copy(mergedDataPointsNP[randomIndex])
 
     indexes = [i for i in range(len(mergedDataPoints))]
-    key_indexes = mergedDataPoints['col0'].tolist()
+    key_indexes = mergedDataPoints.index.to_list()
     randomIndex = (int)(np.random.choice(indexes))
     centroidsLoc[0] = key_indexes[randomIndex]
     centroids[0] = np.ndarray.copy(mergedDataPointsNP[randomIndex])
