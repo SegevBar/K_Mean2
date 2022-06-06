@@ -13,7 +13,7 @@ def validateArgs(k, epsilon, maxIterations = 300):
         if '.' in maxIterations or int(maxIterations) < 0:
             print("Invalid Input!")
             quit()
-    if int(epsilon) < 0: 
+    if float(epsilon) < 0: 
         print("Invalid Input!")
         quit()
     return int(maxIterations)
@@ -30,6 +30,7 @@ if len(sys.argv) == 6:
     maxIterations = sys.argv[2]
     epsilon = sys.argv[3]
     maxIterations = validateArgs(k, epsilon, maxIterations)
+    epsilon = float(epsilon)
     inputFileOne = sys.argv[4]
     inputFileTwo = sys.argv[5]
 elif len(sys.argv) == 5:

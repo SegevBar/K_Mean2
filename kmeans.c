@@ -238,13 +238,13 @@ static PyObject *fit_capi(PyObject *self, PyObject *args)
     printf("fit_capi \n");
     int k;
     int max_iter_py;
-    int epsilon;
+    double epsilon;
     int dim_py;
     int N_py;
     PyObject *centroids;
     PyObject *vectors_py;
 
-    if (!(PyArg_ParseTuple(args, "iiiiiOO", &k, &max_iter_py, &epsilon, &dim_py, &N_py, &centroids, &vectors_py)))
+    if (!(PyArg_ParseTuple(args, "iidiiOO", &k, &max_iter_py, &epsilon, &dim_py, &N_py, &centroids, &vectors_py)))
     {
         printf("PyArg_ParseTuple \n");
         return NULL;
@@ -255,7 +255,6 @@ static PyObject *fit_capi(PyObject *self, PyObject *args)
         return NULL;
     }
     printf("success \n");
-    epsilon = (double) epsilon;
     return Py_BuildValue("O", kmeans(k, max_iter_py, epsilon, dim_py, N_py, centroids, vectors_py));
 }
 
