@@ -61,9 +61,14 @@ fileTwoDataPoints = pd.DataFrame(fileTwoDataPoints)
 
 #merge data files by first column
 mergedDataPoints = fileOneDataPoints.merge(fileTwoDataPoints, on='col0')
-mergedDataPoints.sort_values(by=['col0'])
+print("before")
+for i in range(len(mergedDataPoints)):
+    print(mergedDataPoints[i][0])
+mergedDataPoints.sort_values(by=["col0"])
 mergedDataPoints.set_index('col0')
-
+print("after")
+for i in range(len(mergedDataPoints)):
+    print(mergedDataPoints[i][0])
 if (mergedDataPoints.empty or len(mergedDataPoints.columns) == 0):
     print("Invalid Input!")
     quit()
@@ -80,8 +85,7 @@ if len(mergedDataPointsNP) <= k:
     print("Invalid Input!")
     quit()
 
-for i in range(len(mergedDataPoints)):
-    print(mergedDataPointsNP[i][0])
+
 
 #methods for main loop:
 def minDistance(D):
