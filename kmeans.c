@@ -251,7 +251,7 @@ static PyObject *fit_capi(PyObject *self, PyObject *args)
     {
         return NULL;
     }
-
+    printf("success");
     return Py_BuildValue("O", kmeans(k, max_iter_py, epsilon, dim_py, N_py, centroids, vectors_py));
 }
 
