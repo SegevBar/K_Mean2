@@ -80,7 +80,7 @@ if len(mergedDataPointsNP) <= k:
     print("Invalid Input!")
     quit()
 
-for i in range(len(mergedDataPointsNP)):
+for i in range(len(mergedDataPoints)):
     print(mergedDataPointsNP[i][0])
 
 #methods for main loop:
