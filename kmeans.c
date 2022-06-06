@@ -89,9 +89,9 @@ static PyObject *kmeans(int k, int max_iter_py, double epsilon_py, int dim_py, i
 
     /*main loop*/
     cnt = 0;
-    curr = 0;
     while ((cnt < max_iter) && (!has_converged))
     {
+        curr = 0;
 
         /*find current vector cluster*/
         for (i = 0; i < N; i++)
